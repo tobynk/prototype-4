@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviour
     public float speed = 5.0f;
     public bool haspowerup=false;
     private float powerupStrength = 15.0f;
+    public GameObject powerupindicator;
     // Start is called before the first frame update
     void Start()
     {
@@ -21,6 +22,7 @@ public class PlayerController : MonoBehaviour
     {
         float forwardInput = Input.GetAxis("Vertical");
         playerRB.AddForce(focalpoint.transform.forward * speed * forwardInput);
+        powerupindicator.transform.position=transform.position+new Vector3(0,-0.5f,0);
         
     }
     
@@ -29,13 +31,23 @@ public class PlayerController : MonoBehaviour
         if(other.CompareTag("PowerUp"));
         {
             haspowerup=true;
+            powerupindicator.gameObject.SetActive(true);
             Destroy(other.gameObject);
+            StartCoroutine(powerupcountdownrountine());
         }
-
+    
         
+    }
+
+    IEnumerator powerupcountdownrountine()
+    {
+        yield return new WaitForSeconds(7);
+        haspowerup=false;
+        powerupindicator.gameObject.SetActive(false);
     }
     private void OnCollisionEnter(Collision Collision)
     {
+
         if(Collision.gameObject.CompareTag("Enemy") && haspowerup);
         {
             Rigidbody enemyRigidbody = Collision.gameObject.GetComponent<Rigidbody>();
